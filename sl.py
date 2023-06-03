@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-import time
 import os
+import sys
+import argparse
+import time
 
 # 簡単な列車のアニメーションの定義
 frames = [
@@ -33,20 +35,34 @@ frames = [
 
 def animate(frames, speed=0.03):
     terminal_width = os.get_terminal_size().columns
-    terminal_width -= 50
-    for space in range(terminal_width, 0, -1):
-        for frame in frames:
-            # 前のフレームを消すためにコンソールをクリアします
-            os.system('cls' if os.name == 'nt' else 'clear')
+    terminal_width -= 100
+    ANIMA_SPEED = 10
+    anima_idx = 0
+    for space in range(terminal_width*2):
+        if space % ANIMA_SPEED == 0:
+            anima_idx += 1
+            anima_idx %= len(frames)
+        frame = frames[anima_idx]
 
-            # スペースを各行に追加し、ターミナル幅を超えないように調整します
-            frame_lines = frame.split('\n')
-            for i in range(len(frame_lines)):
-                line = " " * space + frame_lines[i]
-                line = line[:terminal_width]  # ターミナルの幅を超えないように調整
-                print(line)
+        # 前のフレームを消すためにコンソールをクリアします
+        os.system('cls' if os.name == 'nt' else 'clear')
 
-            time.sleep(speed)
+        # スペースを各行に追加し、ターミナル幅を超えないように調整します
+        frame_lines = frame.split('\n')
+        for i in range(len(frame_lines)):
+            line = " " * terminal_width + frame_lines[i] + " " * terminal_width
+            line = line[space:space + terminal_width]  # ターミナルの幅を超えないように調整
+            print(line)
 
-# アニメーションを開始します
-animate(frames)
+        time.sleep(speed)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='パトカー版SLコマンド')
+    parser.add_argument('-r', '--repeat', action='store_true')
+    args = parser.parse_args()
+
+    # アニメーションを開始します
+    while True:
+       animate(frames)
+       if not args.repeat:
+           break
