@@ -33,13 +33,12 @@ frames = [
 """
 ]
 
-def animate(frames, speed=0.03):
+def animate(frames, speed=0.03, anima_speed = 8):
     terminal_width = os.get_terminal_size().columns
     terminal_width -= 100
-    ANIMA_SPEED = 10
     anima_idx = 0
     for space in range(terminal_width*2):
-        if space % ANIMA_SPEED == 0:
+        if space % anima_speed == 0:
             anima_idx += 1
             anima_idx %= len(frames)
         frame = frames[anima_idx]
@@ -59,10 +58,12 @@ def animate(frames, speed=0.03):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='パトカー版SLコマンド')
     parser.add_argument('-r', '--repeat', action='store_true')
+    parser.add_argument('--speed',default=0.03, type=float, help="move speed. default=0.03")
+    parser.add_argument('--animation_speed', default=8, type=int, help="animation speed.How many frame keep same frame. default=8")
     args = parser.parse_args()
 
     # アニメーションを開始します
     while True:
-       animate(frames)
+       animate(frames, args.speed, args.animation_speed)
        if not args.repeat:
            break
